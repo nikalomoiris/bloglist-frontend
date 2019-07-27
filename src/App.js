@@ -3,6 +3,7 @@ import blogsService from './services/blogs';
 import loginService from './services/login';
 import Blog from './components/Blog';
 import LoginForm from './components/LoginForm';
+import AddBlogForm from './components/AddBlogForm';
 
 function App() {
     const [user, setUser] = useState('');
@@ -16,7 +17,7 @@ function App() {
             setBlogs(initialBlogs);
         }
         fetchBlogs();
-    }, []);
+    }, [blogs]);
 
     useEffect(() => {
         const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser');
@@ -37,6 +38,7 @@ function App() {
                 'loggedBlogappUser', JSON.stringify(user)
             );
 
+            blogsService.setToken(user.token);
             setUser(user);
             setUsername('');
             setPassword('');
@@ -78,8 +80,13 @@ function App() {
                 <h1>Bloglist App</h1>
             </header>
             <h2>Blogs</h2>
-            <h3>{user.name} is logged in</h3>
-            <button onClick={handleLogout}>Logout</button>
+            <div>
+                <h3>{user.name} is logged in</h3>
+            </div>
+            <div>
+                <button onClick={handleLogout}>Logout</button>
+            </div>
+            <AddBlogForm />
             {blogs.map(blog => <Blog key={blog.id} title={blog.title} author={blog.author} />)}
         </div>
     );
