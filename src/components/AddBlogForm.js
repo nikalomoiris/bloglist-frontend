@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import blogsService from '../services/blogs';
 
-const AddBlogForm = ({setNotificationMessage, setNotifType}) => {
+const AddBlogForm = ({ setNotificationMessage,
+    setNotifType,
+    blogs,
+    setBlogs}) => {
     const [title, setTitle] = useState('');
     const [author, setAuthor] = useState('');
     const [url, setUrl] = useState('');
@@ -21,10 +24,11 @@ const AddBlogForm = ({setNotificationMessage, setNotifType}) => {
     const handleCreateBlog = async (event) => {
         event.preventDefault();
         try {
-            await blogsService
+            const returnedBlog = await blogsService
                 .create({
                     title, author, url
                 });
+            setBlogs(blogs.concat(returnedBlog));
             setNotificationMessage(`a new blog ${title} ${author} added`);
             setNotifType('info');
             setTimeout(() => {

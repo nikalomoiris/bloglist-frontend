@@ -20,7 +20,7 @@ function App() {
             setBlogs(initialBlogs);
         }
         fetchBlogs();
-    }, [blogs]);
+    }, []);
 
     useEffect(() => {
         const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser');
@@ -97,7 +97,9 @@ function App() {
                 <button onClick={handleLogout}>Logout</button>
             </div>
             <AddBlogForm setNotificationMessage={setNotificationMessage}
-                setNotifType={setNotifType} />
+                setNotifType={setNotifType}
+                blogs={blogs}
+                setBlogs={setBlogs}/>
             {blogs.map(blog => <Blog key={blog.id} title={blog.title} author={blog.author} />)}
         </div>
     );
