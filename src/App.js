@@ -4,12 +4,15 @@ import loginService from './services/login';
 import Blog from './components/Blog';
 import LoginForm from './components/LoginForm';
 import AddBlogForm from './components/AddBlogForm';
+import Notification from './components/Notification';
 
 function App() {
     const [user, setUser] = useState('');
     const [blogs, setBlogs] = useState([]);
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [notificationMessage, setNotificationMessage] = useState(null);
+    const [notifType, setNotifType] = useState('');
 
     useEffect(() => {
         async function fetchBlogs() {
@@ -43,7 +46,12 @@ function App() {
             setUsername('');
             setPassword('');
         } catch (exception) {
-            console.log('Login Failed');
+            setNotificationMessage('Wrong password or username');
+            setNotifType('error');
+            setTimeout(() => {
+                setNotificationMessage(null);
+                setNotifType(null);
+            }, 5000);
         }
     };
 
@@ -63,6 +71,7 @@ function App() {
     if (user === '') {
         return (
             <div className="App">
+                <Notification message={notificationMessage} type={notifType} />
                 <header className="App-header">
                     <h1>Bloglist App</h1>
                 </header>
@@ -76,6 +85,7 @@ function App() {
     }
     return (
         <div className="App">
+            <Notification message={notificationMessage} type={notifType} />
             <header className="App-header">
                 <h1>Bloglist App</h1>
             </header>
@@ -86,7 +96,8 @@ function App() {
             <div>
                 <button onClick={handleLogout}>Logout</button>
             </div>
-            <AddBlogForm />
+            <AddBlogForm setNotificationMessage={setNotificationMessage}
+                setNotifType={setNotifType} />
             {blogs.map(blog => <Blog key={blog.id} title={blog.title} author={blog.author} />)}
         </div>
     );

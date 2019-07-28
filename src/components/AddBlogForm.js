@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import blogsService from '../services/blogs';
 
-const AddBlogForm = () => {
+const AddBlogForm = ({setNotificationMessage, setNotifType}) => {
     const [title, setTitle] = useState('');
     const [author, setAuthor] = useState('');
     const [url, setUrl] = useState('');
@@ -25,11 +25,22 @@ const AddBlogForm = () => {
                 .create({
                     title, author, url
                 });
+            setNotificationMessage(`a new blog ${title} ${author} added`);
+            setNotifType('info');
+            setTimeout(() => {
+                setNotificationMessage(null);
+                setNotifType(null);
+            }, 5000);
             setTitle('');
             setAuthor('');
             setUrl('');
         } catch (exception) {
-            console.log('Blog creation failed');
+            setNotificationMessage(`error while adding a new blog`);
+            setNotifType('error');
+            setTimeout(() => {
+                setNotificationMessage(null);
+                setNotifType(null);
+            }, 5000);
         }
     };
 
