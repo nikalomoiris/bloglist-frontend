@@ -5,6 +5,7 @@ import Blog from './components/Blog';
 import LoginForm from './components/LoginForm';
 import AddBlogForm from './components/AddBlogForm';
 import Notification from './components/Notification';
+import Togglable from './components/Togglable';
 
 function App() {
     const [user, setUser] = useState('');
@@ -66,7 +67,7 @@ function App() {
     const handleLogout = () => {
         setUser('');
         window.localStorage.clear();
-    }
+    };
 
     if (user === '') {
         return (
@@ -96,10 +97,12 @@ function App() {
             <div>
                 <button onClick={handleLogout}>Logout</button>
             </div>
-            <AddBlogForm setNotificationMessage={setNotificationMessage}
-                setNotifType={setNotifType}
-                blogs={blogs}
-                setBlogs={setBlogs}/>
+            <Togglable buttonLabel="new blog">
+                <AddBlogForm setNotificationMessage={setNotificationMessage}
+                    setNotifType={setNotifType}
+                    blogs={blogs}
+                    setBlogs={setBlogs}/>
+            </Togglable>
             {blogs.map(blog => <Blog key={blog.id} title={blog.title} author={blog.author} />)}
         </div>
     );
