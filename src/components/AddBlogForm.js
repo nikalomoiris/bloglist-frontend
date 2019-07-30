@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import blogsService from '../services/blogs';
+import Togglable from './Togglable';
 
 const AddBlogForm = ({ setNotificationMessage,
     setNotifType,
@@ -8,6 +9,8 @@ const AddBlogForm = ({ setNotificationMessage,
     const [title, setTitle] = useState('');
     const [author, setAuthor] = useState('');
     const [url, setUrl] = useState('');
+
+    const blogFormRef = React.createRef();
 
     const handleTitleChange = (event) => {
         setTitle(event.target.value);
@@ -23,6 +26,7 @@ const AddBlogForm = ({ setNotificationMessage,
 
     const handleCreateBlog = async (event) => {
         event.preventDefault();
+        blogFormRef.current.toggleVisibility();
         try {
             const returnedBlog = await blogsService
                 .create({
@@ -49,7 +53,7 @@ const AddBlogForm = ({ setNotificationMessage,
     };
 
     return (
-        <>
+        <Togglable buttonLabel="new blog" ref={blogFormRef}>
             <h2>create new</h2>
             <form onSubmit={handleCreateBlog}>
                 <div>
@@ -65,7 +69,7 @@ const AddBlogForm = ({ setNotificationMessage,
                     <button type="submit">create</button>
                 </div>
             </form>
-        </>
+        </Togglable>
     );
 };
 
