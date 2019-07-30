@@ -26,8 +26,8 @@ const AddBlogForm = ({ setNotificationMessage,
 
     const handleCreateBlog = async (event) => {
         event.preventDefault();
-        blogFormRef.current.toggleVisibility();
         try {
+            blogFormRef.current.toggleVisibility();
             const returnedBlog = await blogsService
                 .create({
                     title, author, url
@@ -45,6 +45,7 @@ const AddBlogForm = ({ setNotificationMessage,
         } catch (exception) {
             setNotificationMessage(`error while adding a new blog`);
             setNotifType('error');
+            console.log(exception);
             setTimeout(() => {
                 setNotificationMessage(null);
                 setNotifType(null);
