@@ -101,11 +101,13 @@ function App() {
                 blogs={blogs}
                 setBlogs={setBlogs}/>
             {blogs.map(blog => <Blog key={blog.id}
+                blogId={blog.id}
                 title={blog.title}
                 author={blog.author}
                 url={blog.url}
                 likes={blog.likes}
-                user={blog.user.name} />)}
+                user={blog.user.name}
+                userId={blog.user.id}/>)}
         </div>
     );
 }
