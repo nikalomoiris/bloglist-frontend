@@ -103,15 +103,16 @@ function App() {
             {blogs
                 .sort((a, b) => Number(b.likes) - Number(a.likes))
                 .map(blog => <Blog key={blog.id}
-                blogs={blogs}
-                setBlogs={setBlogs}
-                blogId={blog.id}
-                title={blog.title}
-                author={blog.author}
-                url={blog.url}
-                likes={blog.likes}
-                user={blog.user.name}
-                userId={blog.user.id}/>)}
+                    blogs={blogs}
+                    setBlogs={setBlogs}
+                    blogId={blog.id}
+                    title={blog.title}
+                    author={blog.author}
+                    url={blog.url}
+                    likes={blog.likes}
+                    username={blog.user.username}
+                    userId={blog.user.id}
+                    loggedUser={user.username}/>)}
         </div>
     );
 }
