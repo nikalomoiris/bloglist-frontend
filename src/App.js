@@ -100,7 +100,9 @@ function App() {
                 setNotifType={setNotifType}
                 blogs={blogs}
                 setBlogs={setBlogs}/>
-            {blogs.map(blog => <Blog key={blog.id}
+            {blogs
+                .sort((a, b) => Number(b.likes) - Number(a.likes))
+                .map(blog => <Blog key={blog.id}
                 blogId={blog.id}
                 title={blog.title}
                 author={blog.author}
