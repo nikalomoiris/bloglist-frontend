@@ -5,7 +5,7 @@ import Togglable from './Togglable';
 const AddBlogForm = ({ setNotificationMessage,
     setNotifType,
     blogs,
-    setBlogs}) => {
+    setBlogs }) => {
     const [title, setTitle] = useState('');
     const [author, setAuthor] = useState('');
     const [url, setUrl] = useState('');
@@ -43,7 +43,7 @@ const AddBlogForm = ({ setNotificationMessage,
             setAuthor('');
             setUrl('');
         } catch (exception) {
-            setNotificationMessage(`error while adding a new blog`);
+            setNotificationMessage('error while adding a new blog');
             setNotifType('error');
             console.log(exception);
             setTimeout(() => {

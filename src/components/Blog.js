@@ -10,7 +10,7 @@ const Blog = ({ blogs,
     likes,
     username,
     userId,
-    loggedUser}) => {
+    loggedUser }) => {
     const blogStyle = {
         paddingTop: 10,
         paddingLeft: 2,
@@ -30,7 +30,7 @@ const Blog = ({ blogs,
 
     const toggleVisibility = () => {
         setVisible(!visible);
-    }
+    };
 
     const increaseLikes = async (event) => {
         event.preventDefault();
@@ -59,7 +59,7 @@ const Blog = ({ blogs,
                 console.log('remove blog failed');
             }
         }
-    }
+    };
 
     return (
         <div style={blogStyle}>
