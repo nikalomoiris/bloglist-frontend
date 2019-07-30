@@ -100,7 +100,12 @@ function App() {
                 setNotifType={setNotifType}
                 blogs={blogs}
                 setBlogs={setBlogs}/>
-            {blogs.map(blog => <Blog key={blog.id} title={blog.title} author={blog.author} />)}
+            {blogs.map(blog => <Blog key={blog.id}
+                title={blog.title}
+                author={blog.author}
+                url={blog.url}
+                likes={blog.likes}
+                user={blog.user.name} />)}
         </div>
     );
 }
