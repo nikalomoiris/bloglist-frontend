@@ -63,10 +63,10 @@ const Blog = ({ blogs,
 
     return (
         <div style={blogStyle}>
-            <div onClick={toggleVisibility} style={hideWhenVisible}>
+            <div className='title' onClick={toggleVisibility} style={hideWhenVisible}>
                 {title} {author}
             </div>
-            <div style={showWhenVisible}>
+            <div style={showWhenVisible} className='blogDetails'>
                 <div onClick={toggleVisibility}>{title} {author}</div>
                 <div>{url}</div>
                 <div>{blogLikes} likes <button onClick={increaseLikes}>like</button></div>
