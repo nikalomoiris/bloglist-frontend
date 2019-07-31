@@ -1,6 +1,6 @@
 import React from 'react';
 import '@testing-library/jest-dom/extend-expect';
-import { render, cleanup } from '@testing-library/react';
+import { render, fireEvent, cleanup } from '@testing-library/react';
 import { prettyDOM } from '@testing-library/dom';
 import SimpleBlog from './SimpleBlog';
 
@@ -29,4 +29,24 @@ test('renders the title, author and amount of likes', () => {
     expect(component.container).toHaveTextContent(
         'blog has 10 likes'
     );
+});
+
+test('if the like button of a component is pressed twice, the event handler is called twice', () => {
+    const blog = {
+        title: 'A blog for testing',
+        author: 'Nikos Kalomoiris',
+        likes: '10'
+    };
+
+    const mockHandler = jest.fn();
+
+    const component = render(
+        <SimpleBlog blog={blog} onClick={mockHandler} />
+    );
+
+    const button = component.getByText('like');
+    fireEvent.click(button);
+    fireEvent.click(button);
+
+    expect(mockHandler.mock.calls.length).toBe(2);
 });
