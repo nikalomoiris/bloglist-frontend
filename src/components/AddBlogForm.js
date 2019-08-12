@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import blogsService from '../services/blogs';
 import Togglable from './Togglable';
+import store from '../store'
+import { showError, showInfo, hideNotification } from '../reducers/NotificationReducer'
 
-const AddBlogForm = ({ setNotificationMessage,
-    setNotifType,
+const AddBlogForm = ({
+    // setNotificationMessage,
+    // setNotifType,
     blogs,
     setBlogs }) => {
     const [title, setTitle] = useState('');
@@ -33,22 +36,26 @@ const AddBlogForm = ({ setNotificationMessage,
                     title, author, url
                 });
             setBlogs(blogs.concat(returnedBlog));
-            setNotificationMessage(`a new blog ${title} ${author} added`);
-            setNotifType('info');
+            store.dispatch(showInfo(`a new blog ${title} ${author} added`))
+            // setNotificationMessage(`a new blog ${title} ${author} added`);
+            // setNotifType('info');
             setTimeout(() => {
-                setNotificationMessage(null);
-                setNotifType(null);
+                store.dispatch(hideNotification())
+                // setNotificationMessage(null);
+                // setNotifType(null);
             }, 5000);
             setTitle('');
             setAuthor('');
             setUrl('');
         } catch (exception) {
-            setNotificationMessage('error while adding a new blog');
-            setNotifType('error');
+            store.dispatch(showError('error while adding a new blog'))
+            // setNotificationMessage('error while adding a new blog');
+            // setNotifType('error');
             console.log(exception);
             setTimeout(() => {
-                setNotificationMessage(null);
-                setNotifType(null);
+                store.dispatch(hideNotification())
+                // setNotificationMessage(null);
+                // setNotifType(null);
             }, 5000);
         }
     };

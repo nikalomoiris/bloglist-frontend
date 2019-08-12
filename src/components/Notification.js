@@ -21,7 +21,7 @@ const Notification = ({ message, type }) => {
         marginBottom: '10px'
     };
 
-    if (message === null) {
+    if (message === 'none') {
         return null;
     }
 

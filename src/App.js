@@ -5,14 +5,16 @@ import Blog from './components/Blog';
 import LoginForm from './components/LoginForm';
 import AddBlogForm from './components/AddBlogForm';
 import Notification from './components/Notification';
+import store from './store'
+import { showError, hideNotification } from './reducers/NotificationReducer'
 
 function App() {
     const [user, setUser] = useState('');
     const [blogs, setBlogs] = useState([]);
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [notificationMessage, setNotificationMessage] = useState(null);
-    const [notifType, setNotifType] = useState('');
+    // const [notificationMessage, setNotificationMessage] = useState(null);
+    // const [notifType, setNotifType] = useState('');
 
     useEffect(() => {
         async function fetchBlogs() {
@@ -46,11 +48,13 @@ function App() {
             setUsername('');
             setPassword('');
         } catch (exception) {
-            setNotificationMessage('Wrong password or username');
-            setNotifType('error');
+            store.dispatch(showError('Wrong password or username'))
+            // setNotificationMessage('Wrong password or username');
+            // setNotifType('error');
             setTimeout(() => {
-                setNotificationMessage(null);
-                setNotifType(null);
+                store.dispatch(hideNotification())
+                // setNotificationMessage(null);
+                // setNotifType(null);
             }, 5000);
         }
     };
@@ -71,7 +75,7 @@ function App() {
     if (user === '') {
         return (
             <div className="App">
-                <Notification message={notificationMessage} type={notifType} />
+                <Notification message={store.getState().message} type={store.getState().notifType} />
                 <header className="App-header">
                     <h1>Bloglist App</h1>
                 </header>
@@ -85,7 +89,7 @@ function App() {
     }
     return (
         <div className="App">
-            <Notification message={notificationMessage} type={notifType} />
+            <Notification message={store.getState().message} type={store.getState().notifType} />
             <header className="App-header">
                 <h1>Bloglist App</h1>
             </header>
@@ -96,8 +100,9 @@ function App() {
             <div>
                 <button onClick={handleLogout}>Logout</button>
             </div>
-            <AddBlogForm setNotificationMessage={setNotificationMessage}
-                setNotifType={setNotifType}
+            <AddBlogForm
+                // setNotificationMessage={setNotificationMessage}
+                // setNotifType={setNotifType}
                 blogs={blogs}
                 setBlogs={setBlogs}/>
             {blogs
