@@ -1,28 +1,23 @@
 import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
 import blogsService from './services/blogs';
 import loginService from './services/login';
 import Blog from './components/Blog';
 import LoginForm from './components/LoginForm';
 import AddBlogForm from './components/AddBlogForm';
 import Notification from './components/Notification';
-import store from './store'
 import { showError, hideNotification } from './reducers/NotificationReducer'
+import { initializeBlogs } from './reducers/BlogReducer'
 
-function App() {
+function App(props) {
+
     const [user, setUser] = useState('');
-    const [blogs, setBlogs] = useState([]);
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    // const [notificationMessage, setNotificationMessage] = useState(null);
-    // const [notifType, setNotifType] = useState('');
 
     useEffect(() => {
-        async function fetchBlogs() {
-            const initialBlogs = await blogsService.getAll();
-            setBlogs(initialBlogs);
-        }
-        fetchBlogs();
-    }, []);
+        props.initializeBlogs()
+    }, [])
 
     useEffect(() => {
         const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser');
@@ -48,13 +43,9 @@ function App() {
             setUsername('');
             setPassword('');
         } catch (exception) {
-            store.dispatch(showError('Wrong password or username'))
-            // setNotificationMessage('Wrong password or username');
-            // setNotifType('error');
-            setTimeout(() => {
-                store.dispatch(hideNotification())
-                // setNotificationMessage(null);
-                // setNotifType(null);
+            props.showError('Wrong password or username')
+           setTimeout(() => {
+                props.hideNotification()
             }, 5000);
         }
     };
@@ -75,7 +66,7 @@ function App() {
     if (user === '') {
         return (
             <div className="App">
-                <Notification message={store.getState().message} type={store.getState().notifType} />
+                <Notification message={props.notificationMessage} type={props.notificationType} />
                 <header className="App-header">
                     <h1>Bloglist App</h1>
                 </header>
@@ -89,7 +80,7 @@ function App() {
     }
     return (
         <div className="App">
-            <Notification message={store.getState().message} type={store.getState().notifType} />
+            <Notification message={props.notificationMessage} type={props.notificationType} />
             <header className="App-header">
                 <h1>Bloglist App</h1>
             </header>
@@ -100,26 +91,27 @@ function App() {
             <div>
                 <button onClick={handleLogout}>Logout</button>
             </div>
-            <AddBlogForm
-                // setNotificationMessage={setNotificationMessage}
-                // setNotifType={setNotifType}
-                blogs={blogs}
-                setBlogs={setBlogs}/>
-            {blogs
+            <AddBlogForm />
+            {props.blogs
                 .sort((a, b) => Number(b.likes) - Number(a.likes))
                 .map(blog => <Blog key={blog.id}
-                    blogs={blogs}
-                    setBlogs={setBlogs}
-                    blogId={blog.id}
-                    title={blog.title}
-                    author={blog.author}
-                    url={blog.url}
-                    likes={blog.likes}
+                    blog={blog}
                     username={blog.user.username}
-                    userId={blog.user.id}
                     loggedUser={user.username}/>)}
         </div>
     );
 }
 
-export default App;
+const mapStateToProps = (state) => {
+    return {
+        notificationMessage: state.notification.message,
+        notificationType: state.notification.notifType,
+        blogs: state.blogs
+    }
+}
+
+const mapDispatchToProps = {
+    initializeBlogs, showError, hideNotification
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

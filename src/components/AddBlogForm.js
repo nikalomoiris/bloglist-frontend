@@ -1,14 +1,10 @@
 import React, { useState } from 'react';
-import blogsService from '../services/blogs';
+import { connect } from 'react-redux';
 import Togglable from './Togglable';
-import store from '../store'
 import { showError, showInfo, hideNotification } from '../reducers/NotificationReducer'
+import { addBlog } from '../reducers/BlogReducer'
 
-const AddBlogForm = ({
-    // setNotificationMessage,
-    // setNotifType,
-    blogs,
-    setBlogs }) => {
+const AddBlogForm = (props) => {
     const [title, setTitle] = useState('');
     const [author, setAuthor] = useState('');
     const [url, setUrl] = useState('');
@@ -31,31 +27,21 @@ const AddBlogForm = ({
         event.preventDefault();
         try {
             blogFormRef.current.toggleVisibility();
-            const returnedBlog = await blogsService
-                .create({
-                    title, author, url
-                });
-            setBlogs(blogs.concat(returnedBlog));
-            store.dispatch(showInfo(`a new blog ${title} ${author} added`))
-            // setNotificationMessage(`a new blog ${title} ${author} added`);
-            // setNotifType('info');
+            props.addBlog({
+                title, author, url
+            });
+            props.showInfo(`a new blog ${title} ${author} added`)
             setTimeout(() => {
-                store.dispatch(hideNotification())
-                // setNotificationMessage(null);
-                // setNotifType(null);
+                props.hideNotification()
             }, 5000);
             setTitle('');
             setAuthor('');
             setUrl('');
         } catch (exception) {
-            store.dispatch(showError('error while adding a new blog'))
-            // setNotificationMessage('error while adding a new blog');
-            // setNotifType('error');
+            props.showError('error while adding a new blog')
             console.log(exception);
             setTimeout(() => {
-                store.dispatch(hideNotification())
-                // setNotificationMessage(null);
-                // setNotifType(null);
+                props.hideNotification()
             }, 5000);
         }
     };
@@ -81,4 +67,17 @@ const AddBlogForm = ({
     );
 };
 
-export default AddBlogForm;
+const mapStateToProps = (state) => {
+    return {
+        blogs: state.blogs
+    }
+}
+
+const mapDispatchToProps = {
+    showError,
+    showInfo,
+    hideNotification,
+    addBlog
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(AddBlogForm);

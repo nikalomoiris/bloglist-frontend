@@ -1,16 +1,11 @@
 import React, { useState } from 'react';
+import { connect } from 'react-redux';
 import blogsService from '../services/blogs';
+import { addBlog, deleteBlog, like } from '../reducers/BlogReducer'
 
-const Blog = ({ blogs,
-    setBlogs,
-    blogId,
-    title,
-    author,
-    url,
-    likes,
-    username,
-    userId,
-    loggedUser }) => {
+const Blog = (props) => {
+    const blog = props.blog;
+
     const blogStyle = {
         paddingTop: 10,
         paddingLeft: 2,
@@ -19,13 +14,12 @@ const Blog = ({ blogs,
         marginBottom: 5
     };
 
-    const [blogLikes, setBlogLikes] = useState(likes);
     const [visible, setVisible] = useState(false);
 
     const showWhenVisible = { display: visible ? '' : 'none' };
     const hideWhenVisible = { display: visible ? 'none' : '' };
     const removeButtonVisibility = {
-        display: loggedUser === username ? '' : 'none'
+        display: props.loggedUser === props.username ? '' : 'none'
     };
 
     const toggleVisibility = () => {
@@ -37,13 +31,13 @@ const Blog = ({ blogs,
         try {
             await blogsService
                 .update({
-                    user: userId,
-                    likes: ++likes,
-                    author,
-                    title,
-                    url
-                }, blogId);
-            setBlogLikes(likes);
+                    user: blog.user.id,
+                    likes: ++blog.likes,
+                    author: blog.author,
+                    title: blog.title,
+                    url: blog.url
+                }, blog.id);
+            props.like(blog.likes);
         } catch (exception) {
             console.log('likes update failed');
         }
@@ -51,10 +45,9 @@ const Blog = ({ blogs,
 
     const handleDelete = async (event) => {
         event.preventDefault();
-        if (window.confirm(`remove blog ${title} by ${author}`)) {
+        if (window.confirm(`remove blog ${blog.title} by ${blog.author}`)) {
             try {
-                await blogsService.deleteBlog(blogId);
-                setBlogs(blogs.filter(blog => blog.id !== blogId));
+                props.deleteBlog(blog.id)
             } catch (exception) {
                 console.log('remove blog failed');
             }
@@ -64,17 +57,23 @@ const Blog = ({ blogs,
     return (
         <div style={blogStyle}>
             <div className='title' onClick={toggleVisibility} style={hideWhenVisible}>
-                {title} {author}
+                {blog.title} {blog.author}
             </div>
             <div style={showWhenVisible} className='blogDetails'>
-                <div onClick={toggleVisibility}>{title} {author}</div>
-                <div>{url}</div>
-                <div>{blogLikes} likes <button onClick={increaseLikes}>like</button></div>
-                <div>added by {username}</div>
+                <div onClick={toggleVisibility}>{blog.title} {blog.author}</div>
+                <div>{blog.url}</div>
+                <div>{blog.likes} likes <button onClick={increaseLikes}>like</button></div>
+                <div>added by {props.username}</div>
                 <button style={removeButtonVisibility} onClick={handleDelete}>remove</button>
             </div>
         </div>
     );
 };
 
-export default Blog;
+const mapDispatchToProps = {
+    addBlog,
+    deleteBlog,
+    like
+}
+
+export default connect(null, mapDispatchToProps)(Blog);
