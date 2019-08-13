@@ -27,7 +27,6 @@ const Blog = (props) => {
 
     const increaseLikes = async (event) => {
         event.preventDefault();
-        console.log('Blogs component blog: ', blog)
         try {
             props.like({
                 user: blog.user.id,
