@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
-import blogsService from '../services/blogs';
 import { addBlog, deleteBlog, like } from '../reducers/BlogReducer'
 
 const Blog = (props) => {
@@ -28,18 +27,17 @@ const Blog = (props) => {
 
     const increaseLikes = async (event) => {
         event.preventDefault();
+        console.log('Blogs component blog: ', blog)
         try {
-            await blogsService
-                .update({
-                    user: blog.user.id,
-                    likes: ++blog.likes,
-                    author: blog.author,
-                    title: blog.title,
-                    url: blog.url
-                }, blog.id);
-            props.like(blog.likes);
+            props.like({
+                user: blog.user.id,
+                likes: ++blog.likes,
+                author: blog.author,
+                title: blog.title,
+                url: blog.url
+            }, blog.id);
         } catch (exception) {
-            console.log('likes update failed');
+            console.log('likes update failed ', exception);
         }
     };
 
