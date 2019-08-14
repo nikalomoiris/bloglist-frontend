@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import blogsService from './services/blogs';
 import loginService from './services/login';
 import Blog from './components/Blog';
 import LoginForm from './components/LoginForm';
@@ -8,10 +7,9 @@ import AddBlogForm from './components/AddBlogForm';
 import Notification from './components/Notification';
 import { showError, hideNotification } from './reducers/NotificationReducer'
 import { initializeBlogs } from './reducers/BlogReducer'
+import { isLoggedIn, login, logout } from './reducers/UserReducer'
 
 function App(props) {
-
-    const [user, setUser] = useState('');
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
@@ -20,11 +18,7 @@ function App(props) {
     }, [])
 
     useEffect(() => {
-        const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser');
-        if (loggedUserJSON) {
-            const user = JSON.parse(loggedUserJSON);
-            setUser(user);
-        }
+        props.isLoggedIn()
     }, []);
 
     const handleLogin = async (event) => {
@@ -34,12 +28,7 @@ function App(props) {
                 username, password
             });
 
-            window.localStorage.setItem(
-                'loggedBlogappUser', JSON.stringify(user)
-            );
-
-            blogsService.setToken(user.token);
-            setUser(user);
+            props.login(user)
             setUsername('');
             setPassword('');
         } catch (exception) {
@@ -59,14 +48,14 @@ function App(props) {
     };
 
     const handleLogout = () => {
-        setUser('');
-        window.localStorage.clear();
+        props.logout()
     };
 
-    if (user === '') {
+    if (props.user === '') {
         return (
             <div className="App">
-                <Notification message={props.notificationMessage} type={props.notificationType} />
+                <Notification message={props.notificationMessage}
+                    type={props.notificationType} />
                 <header className="App-header">
                     <h1>Bloglist App</h1>
                 </header>
@@ -80,13 +69,14 @@ function App(props) {
     }
     return (
         <div className="App">
-            <Notification message={props.notificationMessage} type={props.notificationType} />
+            <Notification message={props.notificationMessage}
+                type={props.notificationType} />
             <header className="App-header">
                 <h1>Bloglist App</h1>
             </header>
             <h2>Blogs</h2>
             <div>
-                <h3>{user.name} is logged in</h3>
+                <h3>{props.user.name} is logged in</h3>
             </div>
             <div>
                 <button onClick={handleLogout}>Logout</button>
@@ -97,7 +87,7 @@ function App(props) {
                 .map(blog => <Blog key={blog.id}
                     blog={blog}
                     username={blog.user.username}
-                    loggedUser={user.username}/>)}
+                    loggedUser={props.user.username}/>)}
         </div>
     );
 }
@@ -106,12 +96,18 @@ const mapStateToProps = (state) => {
     return {
         notificationMessage: state.notification.message,
         notificationType: state.notification.notifType,
-        blogs: state.blogs
+        blogs: state.blogs,
+        user: state.user
     }
 }
 
 const mapDispatchToProps = {
-    initializeBlogs, showError, hideNotification
+    initializeBlogs,
+    showError,
+    hideNotification,
+    isLoggedIn,
+    login,
+    logout
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);
