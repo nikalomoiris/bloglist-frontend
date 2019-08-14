@@ -1,4 +1,5 @@
 import blogService from '../services/blogs'
+import usersService from '../services/users'
 
 export const isLoggedIn = () => {
     return {
@@ -19,15 +20,31 @@ export const logout = () => {
     }
 }
 
-const userReducer = (state = '', action) => {
+export const getAllUsers = () => {
+    return async dispatch => {
+        const users = await usersService.getAll()
+        dispatch ({
+            type: 'GET_ALL_USERS',
+            data: { allUsers: users }
+        })
+    }
+}
+
+const userReducer = (state = {user: '', allUsers: []}, action) => {
     switch (action.type) {
         case 'IS_LOGGED_IN':
             const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser');
             if (loggedUserJSON) {
                 const user = JSON.parse(loggedUserJSON);
-                return user
+                return {
+                    ...state,
+                    user
+                }
             }
-            return ''
+            return {
+                ...state,
+                user: ''
+            }
         case 'LOGIN':
             const user = action.data
             window.localStorage.setItem(
@@ -35,10 +52,21 @@ const userReducer = (state = '', action) => {
             );
 
             blogService.setToken(user.token);
-            return user
+            return {
+                ...state,
+                user
+            }
         case 'LOGOUT':
             window.localStorage.clear();
-            return ''
+            return {
+                ...state,
+                user: ''
+            }
+        case 'GET_ALL_USERS':
+            return {
+                ...state,
+                allUsers: action.data.allUsers
+            }
         default:
             return state
     }

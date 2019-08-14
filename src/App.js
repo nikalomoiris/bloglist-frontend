@@ -1,25 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
+import {
+    BrowserRouter as Router,
+    Route, Link, Redirect, withRouter
+} from 'react-router-dom'
 import loginService from './services/login';
-import Blog from './components/Blog';
 import LoginForm from './components/LoginForm';
-import AddBlogForm from './components/AddBlogForm';
 import Notification from './components/Notification';
+import BlogList from './components/BlogList'
+import UsersList from './components/UsersList'
 import { showError, hideNotification } from './reducers/NotificationReducer'
 import { initializeBlogs } from './reducers/BlogReducer'
-import { isLoggedIn, login, logout } from './reducers/UserReducer'
+import { isLoggedIn, login, logout, getAllUsers } from './reducers/UserReducer'
 
 function App(props) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
+    const padding = { padding: 5 }
+
     useEffect(() => {
         props.initializeBlogs()
+        props.isLoggedIn()
     }, [])
 
     useEffect(() => {
-        props.isLoggedIn()
-    }, []);
+        props.getAllUsers()
+    }, [props.users])
 
     const handleLogin = async (event) => {
         event.preventDefault();
@@ -74,20 +81,19 @@ function App(props) {
             <header className="App-header">
                 <h1>Bloglist App</h1>
             </header>
-            <h2>Blogs</h2>
             <div>
-                <h3>{props.user.name} is logged in</h3>
+                <h3>{props.user.name} is logged in <button onClick={handleLogout}>Logout</button></h3>
             </div>
-            <div>
-                <button onClick={handleLogout}>Logout</button>
-            </div>
-            <AddBlogForm />
-            {props.blogs
-                .sort((a, b) => Number(b.likes) - Number(a.likes))
-                .map(blog => <Blog key={blog.id}
-                    blog={blog}
-                    username={blog.user.username}
-                    loggedUser={props.user.username}/>)}
+            <Router>
+                <div>
+                    <div>
+                        <Link style={padding} to='/'>blogs</Link>
+                        <Link style={padding} to='/users'>users</Link>
+                    </div>
+                    <Route exact path='/' render={() => <BlogList />} />
+                    <Route path='/users' render={() => <UsersList />} />
+                </div>
+            </Router>
         </div>
     );
 }
@@ -97,7 +103,8 @@ const mapStateToProps = (state) => {
         notificationMessage: state.notification.message,
         notificationType: state.notification.notifType,
         blogs: state.blogs,
-        user: state.user
+        user: state.users.user,
+        users: state.users.allUsers
     }
 }
 
@@ -107,7 +114,8 @@ const mapDispatchToProps = {
     hideNotification,
     isLoggedIn,
     login,
-    logout
+    logout,
+    getAllUsers
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);
