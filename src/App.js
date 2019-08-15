@@ -107,9 +107,11 @@ function App(props) {
                         <User user={userById(match.params.id)} />
                     } />
                     <Route exact path='/blogs/:id' render={({ match }) =>
+                        blogById(match.params.id) ?
                         <BlogDetails blog={blogById(match.params.id)}
                             loggedUser={props.user.username}
-                        />
+                        /> : <Redirect to="/" />
+
                     } />
                 </div>
             </Router>
