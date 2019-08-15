@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import {
     BrowserRouter as Router,
-    Route, Link, Redirect, withRouter
+    Route, Link, Redirect
 } from 'react-router-dom'
-import loginService from './services/login';
 import LoginForm from './components/LoginForm';
 import Notification from './components/Notification';
 import BlogList from './components/BlogList'
@@ -16,9 +15,6 @@ import { initializeBlogs } from './reducers/BlogReducer'
 import { isLoggedIn, login, logout, getAllUsers } from './reducers/UserReducer'
 
 function App(props) {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-
     const padding = { padding: 5 }
 
     useEffect(() => {
@@ -30,32 +26,6 @@ function App(props) {
         props.getAllUsers()
     }, [props.blogs])
 
-    const handleLogin = async (event) => {
-        event.preventDefault();
-        try {
-            const user = await loginService.login({
-                username, password
-            });
-
-            props.login(user)
-            setUsername('');
-            setPassword('');
-        } catch (exception) {
-            props.showError('Wrong password or username')
-           setTimeout(() => {
-                props.hideNotification()
-            }, 5000);
-        }
-    };
-
-    const handleUsernameChange = (event) => {
-        setUsername(event.target.value);
-    };
-
-    const handlePasswordChange = (event) => {
-        setPassword(event.target.value);
-    };
-
     const handleLogout = () => {
         props.logout()
     };
@@ -65,52 +35,42 @@ function App(props) {
     }
 
     const blogById = (id) => {
-        console.log(props.blogs.find(blog => blog.id === id))
         return props.blogs.find(blog => blog.id === id)
     }
 
-    if (props.user === '') {
-        return (
-            <div className="App">
-                <Notification message={props.notificationMessage}
-                    type={props.notificationType} />
-                <header className="App-header">
-                    <h1>Bloglist App</h1>
-                </header>
-                <LoginForm handleLogin={handleLogin}
-                    username={username}
-                    handleUsernameChange={handleUsernameChange}
-                    password={password}
-                    handlePasswordChange={handlePasswordChange} />
-            </div>
-        );
-    }
     return (
         <div className="App">
             <Notification message={props.notificationMessage}
                 type={props.notificationType} />
-            <header className="App-header">
-                <h1>Bloglist App</h1>
-            </header>
-            <div>
-                <h3>{props.user.name} is logged in <button onClick={handleLogout}>Logout</button></h3>
-            </div>
             <Router>
                 <div>
-                    <div>
-                        <Link style={padding} to='/'>blogs</Link>
+                    <nav>
+                        <Link style={padding} to='/blogs'>blogs</Link>
                         <Link style={padding} to='/users'>users</Link>
-                    </div>
-                    <Route exact path='/' render={() => <BlogList />} />
+                        {props.user
+                            ?<>
+                                {props.user.name} is logged in
+                                <button onClick={handleLogout}>Logout</button>
+                            </>
+                            : <>
+                                <Link style={padding} to='/'>login</Link>
+                                <Redirect to="/login" />
+                            </>
+                        }
+                    </nav>
+                    <header className="App-header">
+                        <h1>Bloglist App</h1>
+                    </header>
+                    <Route exact path='/login' render={() => <LoginForm />} />
+                    <Route exact path='/blogs' render={() => <BlogList />} />
                     <Route exact path='/users' render={() => <UsersList />} />
                     <Route exact path='/users/:id' render={({ match }) =>
                         <User user={userById(match.params.id)} />
                     } />
                     <Route exact path='/blogs/:id' render={({ match }) =>
                         blogById(match.params.id) ?
-                        <BlogDetails blog={blogById(match.params.id)}
-                            loggedUser={props.user.username}
-                        /> : <Redirect to="/" />
+                            <BlogDetails blog={blogById(match.params.id)} />
+                            : <Redirect to="/blogs" />
 
                     } />
                 </div>

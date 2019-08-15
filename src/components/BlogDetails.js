@@ -5,9 +5,10 @@ import { addBlog, deleteBlog, like } from '../reducers/BlogReducer'
 const BlogDetails = (props) => {
     const blog = props.blog
     const username = blog.user.username
+    const loggedUser = props.user.username
 
     const removeButtonVisibility = {
-        display: props.loggedUser === username ? '' : 'none'
+        display: loggedUser === username ? '' : 'none'
     };
 
     const increaseLikes = async (event) => {
@@ -47,10 +48,16 @@ const BlogDetails = (props) => {
     )
 }
 
+const mapStateToProps = (state) => {
+    return {
+        user: state.users.user
+    }
+}
+
 const mapDispatchToProps = {
     addBlog,
     deleteBlog,
     like
 }
 
-export default connect(null, mapDispatchToProps)(BlogDetails)
+export default connect(mapStateToProps, mapDispatchToProps)(BlogDetails)
