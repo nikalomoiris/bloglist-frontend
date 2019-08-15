@@ -1,5 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
+import { Link } from 'react-router-dom'
 
 const UsersList = (props) => {
     const getUserBlogsNumber = (user) => {
@@ -17,7 +18,9 @@ const UsersList = (props) => {
                     {props.users.map(user =>
                         <tr key={user.id}>
                             <td>
-                                {user.name}
+                                <Link to={`/users/${user.id}`}>
+                                    {user.name}
+                                </Link>
                             </td>
                             <td>
                                 {getUserBlogsNumber(user)}

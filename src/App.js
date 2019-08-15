@@ -9,6 +9,7 @@ import LoginForm from './components/LoginForm';
 import Notification from './components/Notification';
 import BlogList from './components/BlogList'
 import UsersList from './components/UsersList'
+import User from './components/User'
 import { showError, hideNotification } from './reducers/NotificationReducer'
 import { initializeBlogs } from './reducers/BlogReducer'
 import { isLoggedIn, login, logout, getAllUsers } from './reducers/UserReducer'
@@ -26,7 +27,7 @@ function App(props) {
 
     useEffect(() => {
         props.getAllUsers()
-    }, [props.users])
+    }, [props.blogs])
 
     const handleLogin = async (event) => {
         event.preventDefault();
@@ -57,6 +58,10 @@ function App(props) {
     const handleLogout = () => {
         props.logout()
     };
+
+    const userById = (id) => {
+        return props.users.find(user => user.id === id)
+    }
 
     if (props.user === '') {
         return (
@@ -91,7 +96,10 @@ function App(props) {
                         <Link style={padding} to='/users'>users</Link>
                     </div>
                     <Route exact path='/' render={() => <BlogList />} />
-                    <Route path='/users' render={() => <UsersList />} />
+                    <Route exact path='/users' render={() => <UsersList />} />
+                    <Route exact path='/users/:id' render={({ match }) =>
+                        <User user={userById(match.params.id)} />
+                    } />
                 </div>
             </Router>
         </div>
