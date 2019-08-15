@@ -10,6 +10,7 @@ import Notification from './components/Notification';
 import BlogList from './components/BlogList'
 import UsersList from './components/UsersList'
 import User from './components/User'
+import BlogDetails from './components/BlogDetails'
 import { showError, hideNotification } from './reducers/NotificationReducer'
 import { initializeBlogs } from './reducers/BlogReducer'
 import { isLoggedIn, login, logout, getAllUsers } from './reducers/UserReducer'
@@ -63,6 +64,11 @@ function App(props) {
         return props.users.find(user => user.id === id)
     }
 
+    const blogById = (id) => {
+        console.log(props.blogs.find(blog => blog.id === id))
+        return props.blogs.find(blog => blog.id === id)
+    }
+
     if (props.user === '') {
         return (
             <div className="App">
@@ -99,6 +105,11 @@ function App(props) {
                     <Route exact path='/users' render={() => <UsersList />} />
                     <Route exact path='/users/:id' render={({ match }) =>
                         <User user={userById(match.params.id)} />
+                    } />
+                    <Route exact path='/blogs/:id' render={({ match }) =>
+                        <BlogDetails blog={blogById(match.params.id)}
+                            loggedUser={props.user.username}
+                        />
                     } />
                 </div>
             </Router>
