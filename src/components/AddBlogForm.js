@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
+
+import Form from 'react-bootstrap/Form'
+import Button from 'react-bootstrap/Button'
+
 import Togglable from './Togglable';
 import { showError, showInfo, hideNotification } from '../reducers/NotificationReducer'
 import { addBlog } from '../reducers/BlogReducer'
@@ -49,20 +53,38 @@ const AddBlogForm = (props) => {
     return (
         <Togglable buttonLabel="new blog" ref={blogFormRef}>
             <h2>create new</h2>
-            <form onSubmit={handleCreateBlog}>
-                <div>
+            <Form onSubmit={handleCreateBlog}>
+                <Form.Group controlId="formBlogTitle">
+                    <Form.Label>Blog title</Form.Label>
+                    <Form.Control type="text"
+                        value={title} onChange={handleTitleChange}
+                        placeholder="Enter blog title" />
+                </Form.Group>
+                {/* <div>
                     title: <input value={title} onChange={handleTitleChange} />
-                </div>
-                <div>
+                </div> */}
+                <Form.Group controlId="formBlogAthor">
+                    <Form.Label>Blog author</Form.Label>
+                    <Form.Control type="text"
+                        value={author} onChange={handleAuthorChange}
+                        placeholder="Enter blog author" />
+                </Form.Group>
+                {/* <div>
                     author: <input value={author} onChange={handleAuthorChange} />
-                </div>
-                <div>
+                </div> */}
+                <Form.Group controlId="formBlogUrl">
+                    <Form.Label>Blog url</Form.Label>
+                    <Form.Control type="text"
+                        value={url} onChange={handleUrlChange}
+                        placeholder="Enter blog url" />
+                </Form.Group>
+                {/* <div>
                     url: <input value={url} onChange={handleUrlChange} />
-                </div>
-                <div>
-                    <button type="submit">create</button>
-                </div>
-            </form>
+                </div> */}
+                <Button variant="primary" type="submit">
+                    Add
+                </Button>
+            </Form>
         </Togglable>
     );
 };

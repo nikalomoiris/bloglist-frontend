@@ -1,5 +1,9 @@
 import React from 'react'
 import { connect } from 'react-redux'
+
+import Card from 'react-bootstrap/Card'
+import Button from 'react-bootstrap/Button'
+
 import { addBlog, deleteBlog, like } from '../reducers/BlogReducer'
 
 const BlogDetails = (props) => {
@@ -38,13 +42,26 @@ const BlogDetails = (props) => {
     };
 
     return (
-        <div className='blogDetails'>
-            <h2>{blog.title} {blog.author}</h2>
-            <div>{blog.url}</div>
-            <div>{blog.likes} likes <button onClick={increaseLikes}>like</button></div>
-            <div>added by {username}</div>
-            <button style={removeButtonVisibility} onClick={handleDelete}>remove</button>
-        </div>
+        <Card className='blogDetails'>
+            <Card.Body>
+                <Card.Title>{blog.title} by {blog.author}</Card.Title>
+                <Card.Text>
+                    <div>{blog.url}</div>
+                    <div>
+                        {blog.likes} likes
+                        <Button variant="success"
+                            size='sm'
+                            onClick={increaseLikes}>like
+                        </Button>
+                    </div>
+                    <div>added by {username}</div>
+                </Card.Text>
+                <Button variant="danger"
+                    size='sm'
+                    style={removeButtonVisibility}
+                    onClick={handleDelete}>Delete</Button>
+            </Card.Body>
+        </Card>
     )
 }
 

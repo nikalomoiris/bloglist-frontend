@@ -2,6 +2,8 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 
+import Table from 'react-bootstrap/Table'
+
 const UsersList = (props) => {
     const getUserBlogsNumber = (user) => {
         return user.blogs.length
@@ -9,12 +11,14 @@ const UsersList = (props) => {
 
     return (
         <>
-            <table>
-                <tbody>
+            <Table striped bordered hover size="sm">
+                <thead>
                     <tr>
                         <th>User</th>
                         <th>Blogs created</th>
                     </tr>
+                </thead>
+                <tbody>
                     {props.users.map(user =>
                         <tr key={user.id}>
                             <td>
@@ -28,7 +32,7 @@ const UsersList = (props) => {
                         </tr>
                     )}
                 </tbody>
-            </table>
+            </Table>
         </>
     )
 }
